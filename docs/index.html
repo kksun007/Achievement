@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievement Tracker — AI Team / Leon</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ════ Header ════ -->
+  <header class="site-header">
+    <h1>Achievement Tracker</h1>
+    <p class="subtitle">AI Team / Leon</p>
+  </header>
+
+  <main class="content">
+
+    <!-- ════ FPGA DDR4 Verification ════ -->
+    <h2 class="section-heading">FPGA DDR4 Memory Controller Verification</h2>
+    <p class="section-subtext">Baiyang MC (Chisel) + Xilinx MIG PHY-only on Winbond EVB &amp; AXU15EG</p>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">1</span>
+          <span class="card-date">2026-03-06</span>
+        </div>
+        <div class="card-title">Baiyang MC + MIG PHY Verified on Winbond EVB</div>
+        <div class="card-body">
+          <p>Brought up Baiyang DDR4 Memory Controller (Chisel-generated) with Xilinx MIG PHY-only on the Winbond EVB reference platform. MicroBlaze soft CPU drives AXI/APB for DDR4 read/write verification.</p>
+          <p><strong>Result:</strong> 277 passes on DDR4 test iterations. Baseline verified.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">XiangShan/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">2</span>
+          <span class="card-date">2026-03-11</span>
+        </div>
+        <div class="card-title">DDR4 Speed Tuning — 2400 to 1866</div>
+        <div class="card-body">
+          <p>Added Integrated Logic Analyzer to DDR4 design. Reduced speed from DDR4-2400 to DDR4-1866 to resolve signal integrity errors on DQ[12:9].</p>
+          <p><strong>Result:</strong> Pass rate improved from 78% to 100% (25/32 &rarr; 29/29 iterations).</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">XiangShan/&hellip;iLA/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">3</span>
+          <span class="card-date">2026-03-18</span>
+        </div>
+        <div class="card-title">AXU15EG DDR4 Hardware Spec + DQS Errata</div>
+        <div class="card-body">
+          <p>Created authoritative pin constraints document for AXU15EG PL DDR4. Discovered and documented DQS polarity errata in ALINX board manual Rev1.0 Section 2-3 (P/N labels swapped).</p>
+          <p><strong>Key rule:</strong> Always use <code>hardware_spec.md</code> as pin reference.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">mig_phy_only_02/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">4</span>
+          <span class="card-date">2026-03-18</span>
+        </div>
+        <div class="card-title">Baiyang MC Ported to AXU15EG</div>
+        <div class="card-body">
+          <p>Ported the Baiyang MC + dfi2xil_mc adapter from Winbond EVB to AXU15EG. Adapted DDR4-2400 pin constraints, clock topology, and MIG IP configuration for ZU15EG.</p>
+          <p><strong>Validation:</strong> Behavioral simulation matches Winbond EVB reference (MRS/ZQC timing verified).</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">baiyang_port/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">5</span>
+          <span class="card-date">2026-03-20</span>
+        </div>
+        <div class="card-title">MicroBlaze V (RISC-V) Migration</div>
+        <div class="card-body">
+          <p>Upgraded from 32-bit PowerPC MicroBlaze to RISC-V MicroBlaze V at 50 MHz. Functionally operational with two remaining issues.</p>
+          <p><strong>Open:</strong> CBO.FLUSH hangs; DDR4 data integrity needs MC timing register tuning.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-progress">In Progress</span>
+          <span class="card-subproject">baiyang_port_mbv/</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════ Linux & Software Bring-Up ════ -->
+    <h2 class="section-heading">Linux &amp; Software Bring-Up</h2>
+    <p class="section-subtext">PetaLinux BSP, PicoClaw AI assistant, WiFi, Discord integration</p>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">6</span>
+          <span class="card-date">2026-03-20</span>
+        </div>
+        <div class="card-title">PetaLinux BSP Boots on AXU15EG</div>
+        <div class="card-body">
+          <p>Created PetaLinux 2024.2 project for AXU15EG PS. Upgraded ALINX reference XSA from Vivado 2020 to 2024.2, built kernel 6.6.40-xilinx, SD card boot with EXT4 rootfs.</p>
+          <p><strong>Key discovery:</strong> Never recreate PS block design from scratch.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">picoClaw_arm/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">7</span>
+          <span class="card-date">2026-03-25</span>
+        </div>
+        <div class="card-title">PicoClaw Compiled and Deployed</div>
+        <div class="card-body">
+          <p>Built PicoClaw as a static Go binary (22 MB, arm64, <code>CGO_ENABLED=0</code>). Deployed to board via SD card. Git repository initialized.</p>
+          <p><strong>Source:</strong> GitHub <code>sipeed/picoclaw</code></p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">picoClaw_arm/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">8</span>
+          <span class="card-date">2026-03-26</span>
+        </div>
+        <div class="card-title">USB WiFi Ported (RTL8812BU)</div>
+        <div class="card-body">
+          <p>Integrated Realtek RTL8812BU out-of-tree driver via PetaLinux Yocto recipe. TP-Link AC1300 (Archer T3U) dongle provides 867 Mbps 5 GHz + 400 Mbps 2.4 GHz WiFi.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">picoClaw_arm/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">9</span>
+          <span class="card-date">2026-03-26</span>
+        </div>
+        <div class="card-title">Claude LLM API Integrated</div>
+        <div class="card-body">
+          <p>Configured PicoClaw to use Claude API via WhalechipAI proxy. Also supports Gemini and NVIDIA NIM backends for multi-model AI inference on the board.</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">picoClaw_arm/</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">10</span>
+          <span class="card-date">2026-03-27</span>
+        </div>
+        <div class="card-title">Discord Gateway Connected</div>
+        <div class="card-body">
+          <p>Connected PicoClaw to Discord WebSocket gateway, enabling natural language control of FPGA LEDs from a phone.</p>
+          <p><strong>Chain:</strong> Discord &rarr; PicoClaw &rarr; Claude API &rarr; led_ctrl &rarr; AXI GPIO &rarr; PL LEDs</p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">picoClaw_arm/</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════ OpenWrt & Deployment ════ -->
+    <h2 class="section-heading">OpenWrt Hybrid Deployment</h2>
+    <p class="section-subtext">PetaLinux boot chain + OpenWrt rootfs for production-ready networking</p>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-number">11</span>
+          <span class="card-date">2026-03-29</span>
+        </div>
+        <div class="card-title">OpenWrt Hybrid Deployment</div>
+        <div class="card-body">
+          <p>Implemented hybrid boot: PetaLinux boot chain (FAT32) + OpenWrt rootfs (EXT4: procd, opkg, UCI, LuCI, dnsmasq, nftables). ~1 day implementation vs 2-4 months for full port.</p>
+          <p><strong>Scripts:</strong> <code>build_openwrt_rootfs.sh</code>, <code>deploy_sd_openwrt.sh</code></p>
+        </div>
+        <div class="card-footer">
+          <span class="status-badge status-done">Done</span>
+          <span class="card-subproject">openWrt/</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════ Milestone Summary Table ════ -->
+    <h2 class="section-heading">Milestone Summary</h2>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Milestone</th>
+          <th class="date">Date</th>
+          <th class="status">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">1</td>
+          <td>Baiyang MC + MIG PHY verified on Winbond EVB</td>
+          <td class="date">2026-03-06</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">2</td>
+          <td>DDR4 speed tuning (2400 &rarr; 1866) passes 100%</td>
+          <td class="date">2026-03-11</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">3</td>
+          <td>AXU15EG DDR4 hardware spec + DQS errata documented</td>
+          <td class="date">2026-03-18</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">4</td>
+          <td>Baiyang MC ported to AXU15EG (XCZU15EG)</td>
+          <td class="date">2026-03-18</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">5</td>
+          <td>MicroBlaze V migration experiment</td>
+          <td class="date">2026-03-20</td>
+          <td class="status"><span class="status-badge status-progress">In Progress</span></td>
+        </tr>
+        <tr>
+          <td class="num">6</td>
+          <td>PetaLinux BSP boots on AXU15EG</td>
+          <td class="date">2026-03-20</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">7</td>
+          <td>PicoClaw compiled and deployed</td>
+          <td class="date">2026-03-25</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">8</td>
+          <td>USB WiFi (RTL8812BU) ported</td>
+          <td class="date">2026-03-26</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">9</td>
+          <td>Claude LLM API integrated</td>
+          <td class="date">2026-03-26</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">10</td>
+          <td>Discord gateway connected</td>
+          <td class="date">2026-03-27</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+        <tr>
+          <td class="num">11</td>
+          <td>OpenWrt hybrid deployment</td>
+          <td class="date">2026-03-29</td>
+          <td class="status"><span class="status-badge status-done">Done</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ════ System Architecture ════ -->
+    <h2 class="section-heading">System Architecture</h2>
+
+    <div class="architecture-box">
+      <pre>Phone (Discord)
+  &rarr; Discord WebSocket Gateway
+  &rarr; PicoClaw (static Go binary, arm64)
+  &rarr; Claude / Gemini / NVIDIA NIM cloud APIs (via WhalechipAI proxy)
+  &rarr; led_ctrl (C, GPIO chardev API)
+  &rarr; /dev/gpiochip2 (Linux GPIO chardev)
+  &rarr; AXI GPIO IP (0xA0000000)
+  &rarr; FPGA PL LEDs (active-low)
+
+Hardware: ALINX AXU15EG (XCZU15EG-2FFVB1156I)
+  PS:  Quad-core Cortex-A53, 4 GB DDR4, Linux 6.6.40
+  PL:  UltraScale+ fabric, 2 GB DDR4 (MIG PHY), AXI GPIO
+  I/O: SD card boot, USB WiFi (RTL8812BU), GbE, UART
+
+Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt procd (hybrid)
+                                                    OR PetaLinux systemd</pre>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    Achievement Tracker - Last updated 2026-03-31
+  </footer>
+
+</body>
+</html>
