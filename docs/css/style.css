@@ -64,6 +64,40 @@ body {
   opacity: 0.75;
 }
 
+/* ── Tab bar ── */
+
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  background: var(--bg-section);
+  border-bottom: 2px solid var(--border-color);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.tab {
+  padding: 12px 28px;
+  font-size: 1em;
+  font-weight: 500;
+  color: #6b778c;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--heading-color);
+}
+
+.tab.active {
+  color: var(--heading-color);
+  border-bottom-color: var(--heading-color);
+  font-weight: 600;
+}
+
 /* ── Main content ── */
 
 .content {
