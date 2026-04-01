@@ -286,6 +286,44 @@ body {
   .modal-content { padding: 20px; }
 }
 
+/* ── Milestone link box ── */
+
+.milestone-link-box {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.milestone-link {
+  display: inline-block;
+  font-size: 1.07em;
+  font-weight: 500;
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.milestone-link:hover {
+  background: #f0f4ff;
+  border-color: var(--link-color);
+  box-shadow: var(--card-hover-shadow);
+}
+
+/* ── Back link in header ── */
+
+.back-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.back-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 /* ── Architecture section ── */
 
 .architecture-box {
