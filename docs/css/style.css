@@ -35,7 +35,7 @@ body {
 .site-header {
   background: var(--heading-color);
   color: #fff;
-  padding: 35px 24px 5px;
+  padding: 30px 24px 10px;
   text-align: center;
 }
 
