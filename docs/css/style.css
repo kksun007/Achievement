@@ -222,6 +222,11 @@ body {
   color: #974f0c;
 }
 
+.status-ongoing {
+  background: #deebff;
+  color: #0747a6;
+}
+
 .card-subproject {
   font-size: 0.79em;
   color: #6b778c;
