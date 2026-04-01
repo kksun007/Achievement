@@ -306,7 +306,7 @@ body {
 .modal-image-content {
   padding: 16px;
   text-align: center;
-  max-width: 1000px;
+  max-width: 600px;
 }
 
 .modal-image-content img {
