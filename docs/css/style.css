@@ -306,12 +306,13 @@ body {
 .modal-image-content {
   padding: 16px;
   text-align: center;
-  max-width: 600px;
+  max-width: 90vw;
 }
 
 .modal-image-content img {
   max-width: 100%;
-  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
   border-radius: 4px;
 }
 
