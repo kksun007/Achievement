@@ -44,6 +44,7 @@
         <div class="card-links">
           <a href="https://www.amd.com/zh-tw/products/accelerators/alveo/v80/a-v80-p64g-pq-g.html" target="_blank" rel="noopener noreferrer" class="card-link">Alveo V80 Product Page</a>
           <a href="#" class="card-link" onclick="openPreview(); return false;">Hi-Speed Ethernet Cable Notes</a>
+          <a href="#" class="card-link" onclick="openImagePreview(); return false;">QSFP Form Factor Overview</a>
         </div>
       </div>
 
@@ -283,6 +284,14 @@ Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt p
     </div>
   </div>
 
+  <!-- ════ Image Preview Modal ════ -->
+  <div id="image-overlay" class="modal-overlay" onclick="closeImagePreview()">
+    <div class="modal-content modal-image-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeImagePreview()">&times;</button>
+      <img id="image-preview" src="" alt="Preview">
+    </div>
+  </div>
+
   <script>
     function openPreview() {
       fetch('Hi-Speed-Ethernet-Cable.md')
@@ -297,7 +306,18 @@ Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt p
       document.getElementById('preview-overlay').classList.remove('active');
       document.body.style.overflow = '';
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
+    function openImagePreview() {
+      document.getElementById('image-preview').src = 'images/QSFP_FormFactor.jpg';
+      document.getElementById('image-overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeImagePreview() {
+      document.getElementById('image-overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closePreview(); closeImagePreview(); }
+    });
   </script>
 
 </body>
