@@ -198,6 +198,94 @@ body {
   max-width: 200px;
 }
 
+/* ── Card links ── */
+
+.card-links {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-link {
+  font-size: 0.86em;
+  font-weight: 500;
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.card-link:hover {
+  background: #f0f4ff;
+  border-color: var(--link-color);
+  color: var(--link-hover);
+}
+
+/* ── Modal overlay ── */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 24px;
+  overflow-y: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  padding: 32px 36px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  line-height: 1.7;
+  color: var(--text-color);
+}
+
+.modal-content h1 { font-size: 1.6em; color: var(--heading-color); margin: 0 0 16px; }
+.modal-content h2 { font-size: 1.3em; color: var(--heading-color); margin: 24px 0 10px; }
+.modal-content h3 { font-size: 1.1em; color: var(--heading-color); margin: 20px 0 8px; }
+.modal-content p { margin: 8px 0; }
+.modal-content ul, .modal-content ol { margin: 8px 0 8px 20px; }
+.modal-content li { margin: 4px 0; }
+.modal-content code { background: #f4f5f7; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
+.modal-content hr { border: none; border-top: 1px solid var(--border-color); margin: 20px 0; }
+.modal-content strong { color: #1a1a1a; }
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  color: #6b778c;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.modal-close:hover {
+  color: var(--text-color);
+}
+
+@media (max-width: 680px) {
+  .modal-overlay { padding: 16px; }
+  .modal-content { padding: 20px; }
+}
+
 /* ── Architecture section ── */
 
 .architecture-box {
