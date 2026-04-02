@@ -70,6 +70,9 @@
           <span class="status-badge status-done">Done</span>
           <span class="card-subproject">openWrt/</span>
         </div>
+        <div class="card-links">
+          <a href="#" class="card-link" onclick="openImageModal('images/openWrt_Discord.png'); return false;">OpenWrt + Discord Demo</a>
+        </div>
       </div>
 
     </div>
@@ -306,11 +309,12 @@ Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt p
       document.getElementById('preview-overlay').classList.remove('active');
       document.body.style.overflow = '';
     }
-    function openImagePreview() {
-      document.getElementById('image-preview').src = 'images/QSFP_FormFactor.jpg';
+    function openImageModal(src) {
+      document.getElementById('image-preview').src = src;
       document.getElementById('image-overlay').classList.add('active');
       document.body.style.overflow = 'hidden';
     }
+    function openImagePreview() { openImageModal('images/QSFP_FormFactor.jpg'); }
     function closeImagePreview() {
       document.getElementById('image-overlay').classList.remove('active');
       document.body.style.overflow = '';
