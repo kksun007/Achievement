@@ -72,6 +72,7 @@
         </div>
         <div class="card-links">
           <a href="#" class="card-link" onclick="openImageModal('images/openWrt_Discord.png'); return false;">OpenWrt + Discord Demo</a>
+          <a href="#" class="card-link" onclick="openMdPreview('feasibility_128mb_ram_porting.md'); return false;">128MB RAM Porting Feasibility</a>
         </div>
       </div>
 
@@ -296,8 +297,8 @@ Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt p
   </div>
 
   <script>
-    function openPreview() {
-      fetch('Hi-Speed-Ethernet-Cable.md')
+    function openMdPreview(file) {
+      fetch(file)
         .then(r => r.text())
         .then(md => {
           document.getElementById('preview-body').innerHTML = marked.parse(md);
@@ -305,6 +306,7 @@ Boot: FSBL &rarr; PMU FW &rarr; ATF &rarr; U-Boot &rarr; Kernel &rarr; OpenWrt p
           document.body.style.overflow = 'hidden';
         });
     }
+    function openPreview() { openMdPreview('Hi-Speed-Ethernet-Cable.md'); }
     function closePreview() {
       document.getElementById('preview-overlay').classList.remove('active');
       document.body.style.overflow = '';
