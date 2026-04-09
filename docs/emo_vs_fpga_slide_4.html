@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMO vs FPGA AI Robot Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0f0f8;
+    --muted: #888898;
+    --hint: #555566;
+    --emo-accent: #a78bfa;
+    --emo-mid: #7c3aed;
+    --emo-dim: rgba(124,58,237,0.15);
+    --fpga-accent: #34d399;
+    --fpga-mid: #059669;
+    --fpga-dim: rgba(52,211,153,0.12);
+    --amber: #fbbf24;
+    --coral: #f87171;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .slide {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1280px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* Top accent line */
+  .slide::before {
+    content: '';
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, var(--emo-mid) 0%, var(--emo-accent) 30%, #888 48%, #888 52%, var(--fpga-mid) 70%, var(--fpga-accent) 100%);
+  }
+
+  /* Header */
+  .header {
+    padding: 2rem 2.5rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  }
+
+  .header-left {}
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 8px;
+  }
+  .headline {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .headline .emo-word { color: var(--emo-accent); }
+  .headline .fpga-word { color: var(--fpga-accent); }
+  .tagline {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.06em;
+  }
+  .pill-purple { border-color: var(--emo-mid); color: var(--emo-accent); background: var(--emo-dim); }
+  .pill-green { border-color: var(--fpga-mid); color: var(--fpga-accent); background: var(--fpga-dim); }
+
+  /* Main two-column layout */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+  }
+
+  .col-divider {
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .col {
+    padding: 2rem 2.5rem;
+  }
+
+  /* Column headers */
+  .col-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .avatar-wrap {
+    position: relative;
+    width: 64px;
+    height: 80px;
+    flex-shrink: 0;
+  }
+  .avatar-img {
+    width: 64px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    display: block;
+  }
+  .avatar-fallback {
+    width: 64px;
+    height: 80px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: var(--surface2);
+  }
+  .avatar-badge {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+  }
+  .badge-emo { background: var(--emo-mid); }
+  .badge-fpga { background: var(--fpga-mid); }
+
+  .col-title-block {}
+  .col-name {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .col-name-emo { color: var(--emo-accent); }
+  .col-name-fpga { color: var(--fpga-accent); }
+  .col-maker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .col-desc {
+    font-size: 12px;
+    color: var(--hint);
+    line-height: 1.5;
+  }
+
+  /* Section */
+  .section { margin-bottom: 1.25rem; }
+  .sec-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sec-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .spec-list { display: flex; flex-direction: column; gap: 5px; }
+  .spec-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .spec-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .spec-item strong { color: var(--text); font-weight: 500; }
+
+  /* Memory bar */
+  .mem-bar-outer {
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    height: 10px;
+    overflow: hidden;
+    display: flex;
+    margin: 6px 0 4px;
+  }
+  .mem-seg { height: 100%; }
+  .mem-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+  }
+  .mem-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+  }
+  .mem-dot { width: 6px; height: 6px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .tag {
+    font-size: 10.5px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .tag-emo { border-color: rgba(167,139,250,0.3); color: var(--emo-accent); background: rgba(124,58,237,0.1); }
+  .tag-fpga { border-color: rgba(52,211,153,0.3); color: var(--fpga-accent); background: rgba(5,150,105,0.1); }
+  .tag-neutral { border-color: var(--border2); color: var(--muted); background: rgba(255,255,255,0.03); }
+
+  /* Architecture flow */
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 4px 0;
+  }
+  .arch-node {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .arch-node-emo { border-color: rgba(167,139,250,0.25); color: var(--emo-accent); background: rgba(124,58,237,0.08); }
+  .arch-node-fpga { border-color: rgba(52,211,153,0.25); color: var(--fpga-accent); background: rgba(5,150,105,0.08); }
+  .arch-arrow { font-size: 11px; color: var(--hint); }
+
+  /* Highlight box */
+  .highlight {
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 1rem;
+    border: 1px solid;
+  }
+  .highlight-emo {
+    background: rgba(124,58,237,0.08);
+    border-color: rgba(167,139,250,0.2);
+  }
+  .highlight-fpga {
+    background: rgba(5,150,105,0.08);
+    border-color: rgba(52,211,153,0.2);
+  }
+  .highlight-title {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .highlight-emo .highlight-title { color: var(--emo-accent); }
+  .highlight-fpga .highlight-title { color: var(--fpga-accent); }
+  .highlight-body {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .highlight-body strong { font-weight: 500; }
+  .highlight-emo .highlight-body strong { color: var(--emo-accent); }
+  .highlight-fpga .highlight-body strong { color: var(--fpga-accent); }
+
+  /* Footer */
+  .footer {
+    padding: 1rem 2.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(255,255,255,0.01);
+  }
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+  .footer-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--hint);
+  }
+
+  /* Comparison row for power */
+  .power-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .power-bar-wrap { flex: 1; }
+  .power-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 3px; }
+  .power-bar-bg { background: rgba(255,255,255,0.06); border-radius: 3px; height: 6px; overflow: hidden; }
+  .power-bar-fill { height: 100%; border-radius: 3px; }
+
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide { animation: fadeUp 0.5s ease both; }
+  .col:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+  .col:nth-child(3) { animation: fadeUp 0.5s 0.2s ease both; }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">Technical Comparison · Desktop Pet Platform · Phase 1</div>
+      <div class="headline">
+        <span class="emo-word">EMO</span> Desktop Pet
+        &nbsp;vs&nbsp;
+        <span class="fpga-word">FPGA</span> AI Robot
+      </div>
+      <div class="tagline">Commercial closed-platform · Open research platform with 128 MB memory constraint</div>
+    </div>
+    <div class="header-right">
+      <span class="pill pill-purple">Commercial</span>
+      <span class="pill" style="border-color:var(--hint);color:var(--muted);background:rgba(255,255,255,0.03)">VS</span>
+      <span class="pill pill-green">Research</span>
+    </div>
+  </div>
+
+  <!-- Two columns -->
+  <div class="main">
+
+    <!-- LEFT: EMO -->
+    <div class="col">
+
+      <div class="col-head">
+        <div class="avatar-wrap">
+          <img
+            class="avatar-img"
+            src="data:image/png;base64,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"
+            alt="EMO robot"
+            
+          >
+          <div class="avatar-fallback" style="display:none;border-color:rgba(167,139,250,0.3);color:var(--emo-accent);">🤖</div>
+          <div class="avatar-badge badge-emo">★</div>
+        </div>
+        <div class="col-title-block">
+          <div class="col-name col-name-emo">EMO Desktop Pet</div>
+          <div class="col-maker">Living.AI · Commercial · 2021</div>
+          <div class="col-desc">Closed-platform AI companion robot with<br>built-in NPU and cloud-dependent LLM</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Compute</div>
+        <div class="spec-list">
+          <div class="spec-item"><div class="spec-dot" style="background:var(--emo-accent)"></div><div><strong>Unspecified SoC</strong> · Built-in Neural Network Processor · <strong>1.2 TOPS</strong></div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--emo-accent)"></div><div><strong>Wi-Fi 802.11b/g/n</strong> + BT 4.2 · Cloud-dependent AI processing</div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--muted)"></div><div>3 AI Processing Models running concurrently on-device</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Memory</div>
+        <div class="spec-list">
+          <div class="spec-item"><div class="spec-dot" style="background:var(--emo-accent)"></div><div><strong>Unspecified DRAM</strong> · tightly integrated with SoC · vendor-managed</div></div>
+        </div>
+        <div class="mem-bar-outer" style="margin-top:8px">
+          <div class="mem-seg" style="width:35%;background:#7c3aed;opacity:0.9"></div>
+          <div class="mem-seg" style="width:28%;background:#a78bfa;opacity:0.7"></div>
+          <div class="mem-seg" style="width:22%;background:#c4b5fd;opacity:0.5"></div>
+          <div class="mem-seg" style="width:15%;background:#ede9fe;opacity:0.2"></div>
+        </div>
+        <div class="mem-legend">
+          <div class="mem-item"><div class="mem-dot" style="background:#7c3aed"></div>OS + AI Models</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#a78bfa"></div>Emotion Engine</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#c4b5fd"></div>Sensor buffers</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#ede9fe;opacity:0.5"></div>Reserved</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">AI Architecture</div>
+        <div class="arch-flow">
+          <div class="arch-node arch-node-emo">Wake word</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-emo">Local NPU</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node" style="border-color:rgba(251,191,36,0.3);color:#fbbf24;background:rgba(251,191,36,0.08)">Living.AI Cloud</div>
+        </div>
+        <div class="arch-flow" style="margin-top:4px">
+          <div class="arch-node arch-node-emo">Face detect</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-emo">Object track</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-emo">Emotion engine</div>
+        </div>
+        <div class="arch-flow" style="margin-top:4px">
+          <div class="arch-node arch-node-emo">Nav sensors</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-emo">Local path plan</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-emo">Auto charging</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Sensors</div>
+        <div class="tags">
+          <span class="tag tag-emo">4-mic array</span>
+          <span class="tag tag-emo">HD wide-angle cam</span>
+          <span class="tag tag-emo">ToF laser 25cm</span>
+          <span class="tag tag-emo">6-axis IMU</span>
+          <span class="tag tag-emo">4× anti-drop</span>
+          <span class="tag tag-emo">touch sensor</span>
+          <span class="tag tag-emo">ambient light</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Actuation &amp; Display</div>
+        <div class="tags">
+          <span class="tag tag-neutral">4× digital servos</span>
+          <span class="tag tag-neutral">HD LED face display</span>
+          <span class="tag tag-neutral">1000+ expressions</span>
+          <span class="tag tag-neutral">speaker</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Power</div>
+        <div class="spec-list">
+          <div class="spec-item"><div class="spec-dot" style="background:#fbbf24"></div><div><strong>Internal LiPo</strong> · Wireless charging skateboard · Auto-return docking</div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--muted)"></div><div>SoC estimated <strong>1–2W</strong> · Total system ~3–5W</div></div>
+        </div>
+        <div class="power-row" style="margin-top:8px">
+          <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);width:60px">~3–5W</div>
+          <div class="power-bar-wrap">
+            <div class="power-bar-bg">
+              <div class="power-bar-fill" style="width:22%;background:linear-gradient(90deg,var(--emo-mid),var(--emo-accent))"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight highlight-emo">
+        <div class="highlight-title">⚠ Platform Constraints</div>
+        <div class="highlight-body">
+          <strong>Closed ecosystem</strong> · Proprietary firmware · <strong>Cloud-dependent</strong> for LLM capabilities · Vendor controls feature roadmap · Limited hackability · Privacy considerations with always-on cloud API
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- RIGHT: FPGA Platform -->
+    <div class="col">
+
+      <div class="col-head">
+        <div class="avatar-wrap">
+          <div class="avatar-fallback" style="display:flex;border-color:rgba(52,211,153,0.3);color:var(--fpga-accent);font-size:24px;">⚡</div>
+          <div class="avatar-badge badge-fpga">★</div>
+        </div>
+        <div class="col-title-block">
+          <div class="col-name col-name-fpga">FPGA AI Robot Platform</div>
+          <div class="col-maker">ACU15EG · XCZU15EG · Research · 2026</div>
+          <div class="col-desc">Open platform: Cube-Lite Memory Controller<br>128 MB Cube-lite as sole memory target</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Compute</div>
+        <div class="spec-list">
+          <div class="spec-item"><div class="spec-dot" style="background:var(--fpga-accent)"></div><div><strong>XCZU15EG MPSoC</strong> · Cortex-A53 ×4 + Cortex-R5F ×2 · PL FPGA logic</div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--fpga-accent)"></div><div><strong>PicoClaw</strong> on Linux · Go binary &lt;10MB · MCP protocol · Multi-LLM support</div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--muted)"></div><div>PL fabric: Beamforming + ISP + DMA + <strong>Cube-Lite Memory Controller</strong></div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Memory — 128 MB Cube-lite (target) / Micron DDR4 (current)</div>
+        <div class="mem-bar-outer" style="margin-top:8px">
+          <div class="mem-seg" style="width:6%;background:#059669"></div>
+          <div class="mem-seg" style="width:6%;background:#10b981"></div>
+          <div class="mem-seg" style="width:23%;background:#34d399"></div>
+          <div class="mem-seg" style="width:13%;background:#6ee7b7"></div>
+          <div class="mem-seg" style="width:12%;background:#a7f3d0"></div>
+          <div class="mem-seg" style="width:12%;background:#d1fae5;opacity:0.6"></div>
+          <div class="mem-seg" style="width:28%;background:rgba(255,255,255,0.05)"></div>
+        </div>
+        <div class="mem-legend">
+          <div class="mem-item"><div class="mem-dot" style="background:#059669"></div>Kernel ~8MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#10b981"></div>PicoClaw bin ~8MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#34d399"></div>PicoClaw heap ~30MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#6ee7b7"></div>Buffers ~17MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#a7f3d0"></div>PL DMA ~16MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:#d1fae5;opacity:0.6"></div>Slab ~15MB</div>
+          <div class="mem-item"><div class="mem-dot" style="background:rgba(255,255,255,0.15)"></div>Headroom ~34MB</div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;font-family:'DM Mono',monospace;color:rgba(52,211,153,0.7)">
+          ✦ rootfs offloaded → SD Card ext4 (saves ~20MB RAM)
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">AI Architecture</div>
+        <div class="arch-flow">
+          <div class="arch-node arch-node-fpga">PDM mics</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">PL Beamform</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">Groq STT</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">PicoClaw</div>
+        </div>
+        <div class="arch-flow" style="margin-top:4px">
+          <div class="arch-node arch-node-fpga">MIPI cam</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">PL ISP</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">Face detect</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">Emotion</div>
+        </div>
+        <div class="arch-flow" style="margin-top:4px">
+          <div class="arch-node arch-node-fpga">PicoClaw</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">Claude / GPT API</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">TTS</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-node-fpga">Speaker</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Sensors (Planned)</div>
+        <div class="tags">
+          <span class="tag tag-fpga">4× PDM MEMS mics</span>
+          <span class="tag tag-fpga">MIPI CSI cam</span>
+          <span class="tag tag-fpga">VL53L0X ToF</span>
+          <span class="tag tag-fpga">MPU-6050 IMU</span>
+          <span class="tag tag-fpga">TTP223 touch</span>
+          <span class="tag tag-fpga">VEML7700 light</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Actuation &amp; Display</div>
+        <div class="tags">
+          <span class="tag tag-neutral">PCA9685 16-ch PWM</span>
+          <span class="tag tag-neutral">SG90 ×2 arms</span>
+          <span class="tag tag-neutral">MG90S waist</span>
+          <span class="tag tag-neutral">2.4" IPS face LCD</span>
+          <span class="tag tag-neutral">MAX98357A amp</span>
+          <span class="tag tag-neutral">8×8 WS2812 LED</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">Power</div>
+        <div class="spec-list">
+          <div class="spec-item"><div class="spec-dot" style="background:#fbbf24"></div><div><strong>12V DC tethered</strong> · USB-C PD 65W option · No battery (tech demo phase)</div></div>
+          <div class="spec-item"><div class="spec-dot" style="background:var(--muted)"></div><div>Typical <strong>~18W</strong> · INA226 real-time power monitoring on all rails</div></div>
+        </div>
+        <div class="power-row" style="margin-top:8px">
+          <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);width:60px">~18W</div>
+          <div class="power-bar-wrap">
+            <div class="power-bar-bg">
+              <div class="power-bar-fill" style="width:75%;background:linear-gradient(90deg,var(--fpga-mid),var(--fpga-accent))"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight highlight-fpga">
+        <div class="highlight-title">✦ Key Innovations</div>
+        <div class="highlight-body">
+          <strong>Cube-lite 128MB</strong> as sole system memory · FPGA PL = memory controller + AI accelerator simultaneously · <strong>PicoClaw</strong> + MCP protocol on constrained Linux · Open, hackable, research-ready
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--emo-mid)"></div>EMO closed platform</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--fpga-mid)"></div>FPGA open platform</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#34d399;opacity:0.6"></div>128MB allocation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;opacity:0.6"></div>rootfs → SD Card</div>
+      <div class="legend-item"><div class="legend-dot" style="border:1px solid var(--border2);background:transparent"></div>current phase</div>
+    </div>
+    <div class="footer-meta">Phase 1 · Tech Demo Platform · ACU15EG + Cube-Lite MC + PicoClaw · 2026</div>
+  </div>
+
+</div>
+
+</body>
+</html>
