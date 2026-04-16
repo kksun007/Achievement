@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Interaction Pipeline — Progress Report</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --success: #059669;
+    --warning: #d97706;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary);
+  }
+  header h1 { font-size: 1.75rem; color: var(--primary); margin-bottom: 0.25rem; }
+  header .subtitle { color: var(--muted); font-size: 0.95rem; }
+  header .meta {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+  .stat-card .label { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+
+  .phase {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .phase-header {
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-header .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-done { background: #d1fae5; color: #065f46; }
+  .badge-future { background: #fef3c7; color: #92400e; }
+  .phase-header h2 { font-size: 1.1rem; }
+  .phase-body { padding: 1.25rem; }
+  .phase-body p { margin-bottom: 0.75rem; color: var(--text); font-size: 0.92rem; }
+
+  .arch-diagram {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 1rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0.75rem 0;
+  }
+  th, td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th { background: #f1f5f9; font-weight: 600; font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+
+  .pin-table td:first-child { font-family: monospace; font-weight: 600; }
+  .pin-table td:nth-child(2) { font-family: monospace; }
+  .pin-table td:nth-child(3) { font-family: monospace; }
+
+  .file-tree {
+    background: #f1f5f9;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    margin: 0.75rem 0;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.25rem 0 0.5rem 0;
+  }
+
+  .next-steps {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .next-steps h3 { font-size: 1rem; color: #92400e; margin-bottom: 0.75rem; }
+  .next-steps ul { padding-left: 1.25rem; font-size: 0.9rem; }
+  .next-steps li { margin-bottom: 0.35rem; }
+
+  .footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Voice Interaction Pipeline for AXU15EG</h1>
+  <div class="subtitle">PicoClaw AI Assistant — Voice Control via FPGA I2S Audio</div>
+  <div class="meta">
+    <span>Date: 2026-04-15</span>
+    <span>Board: ALINX AXU15EG (Zynq UltraScale+ ZU15EG)</span>
+    <span>Toolchain: AMD Vivado/PetaLinux 2024.2</span>
+  </div>
+</header>
+
+<!-- Overview Stats -->
+<div class="overview">
+  <div class="stat-card">
+    <div class="value">3 / 4</div>
+    <div class="label">Phases Complete</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">9</div>
+    <div class="label">I2S Signal Lines</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">8</div>
+    <div class="label">Python Modules</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">~17 MB</div>
+    <div class="label">RAM Footprint</div>
+  </div>
+</div>
+
+<!-- Architecture -->
+<div class="phase">
+  <div class="phase-header">
+    <h2>System Architecture</h2>
+  </div>
+  <div class="phase-body">
+    <p>End-to-end voice interaction: user speaks into a 4-microphone array, the AI processes the request (including FPGA LED control), and responds through a speaker.</p>
+    <div class="arch-diagram">
+4x INMP441 Mic ──I2S──&gt; FPGA PL (I2S Rx x4) ──DMA──&gt; PS DDR
+                                                        |
+                                         Python Voice Pipeline (PS ARM):
+                                           VAD (webrtcvad)
+                                            &gt; STT (Groq Whisper API)
+                                              &gt; PicoClaw WebSocket
+                                                &gt; LLM (Claude AI)
+                                                &gt; Agent Loop (led_ctrl, tools)
+                                              &lt; Response text
+                                            &gt; TTS (OpenAI / espeak-ng)
+                                                        |
+PS DDR ──DMA──&gt; FPGA PL (I2S Tx) ──I2S──&gt; MAX98357A ──&gt; Speaker</div>
+  </div>
+</div>
+
+<!-- Phase 1 -->
+<div class="phase">
+  <div class="phase-header">
+    <span class="badge badge-done">Done</span>
+    <h2>Phase 1: FPGA I2S Audio Hardware</h2>
+  </div>
+  <div class="phase-body">
+    <p>Added I2S audio subsystem to the existing Vivado block design (which already includes PS, AXI GPIO for LED/button control). The design builds on the proven vendor reference project approach.</p>
+
+    <div class="section-title">Block Design IPs Added</div>
+    <table>
+      <tr><th>IP</th><th>Configuration</th><th>Purpose</th></tr>
+      <tr><td>I2S Receiver (PG308)</td><td>8 channels, 4 SDATA lines, master, 24-bit</td><td>4x INMP441 mic capture</td></tr>
+      <tr><td>I2S Transmitter (PG308)</td><td>2 channels, 1 SDATA line, master, 24-bit</td><td>MAX98357A speaker output</td></tr>
+      <tr><td>Audio Formatter (PG330)</td><td>S2MM (capture) + MM2S (playback)</td><td>DMA: PS DDR &harr; I2S</td></tr>
+      <tr><td>Clocking Wizard</td><td>12.288 MHz from 100 MHz pl_clk0</td><td>Audio master clock (MCLK)</td></tr>
+      <tr><td>Interrupt Concat</td><td>4 IRQs &rarr; PS pl_ps_irq0</td><td>DMA + I2S completion</td></tr>
+    </table>
+
+    <div class="section-title">J50 40-Pin Connector Pin Assignment (BANK47, LVCMOS33)</div>
+    <table class="pin-table">
+      <tr><th>Signal</th><th>J50 Pin</th><th>FPGA Pin</th><th>Function</th></tr>
+      <tr><td>i2s_rx_sclk</td><td>Pin 6</td><td>B18</td><td>INMP441 SCK (shared, 4 mics)</td></tr>
+      <tr><td>i2s_rx_lrclk</td><td>Pin 8</td><td>C18</td><td>INMP441 WS (shared, 4 mics)</td></tr>
+      <tr><td>i2s_rx_sd0</td><td>Pin 10</td><td>A13</td><td>Mic 1 serial data</td></tr>
+      <tr><td>i2s_rx_sd1</td><td>Pin 12</td><td>C13</td><td>Mic 2 serial data</td></tr>
+      <tr><td>i2s_rx_sd2</td><td>Pin 14</td><td>B20</td><td>Mic 3 serial data</td></tr>
+      <tr><td>i2s_rx_sd3</td><td>Pin 16</td><td>B15</td><td>Mic 4 serial data</td></tr>
+      <tr><td>i2s_tx_bclk</td><td>Pin 18</td><td>A21</td><td>MAX98357A bit clock</td></tr>
+      <tr><td>i2s_tx_lrc</td><td>Pin 20</td><td>C12</td><td>MAX98357A word select</td></tr>
+      <tr><td>i2s_tx_din</td><td>Pin 5</td><td>B19</td><td>MAX98357A serial data</td></tr>
+    </table>
+
+    <div class="section-title">Build Results</div>
+    <table>
+      <tr><th>Metric</th><th>Result</th></tr>
+      <tr><td>Synthesis</td><td>Passed (0 errors)</td></tr>
+      <tr><td>Implementation</td><td>Passed (0 failed nets)</td></tr>
+      <tr><td>XSA output</td><td>design_1_wrapper_audio_v4.xsa (1.3 MB)</td></tr>
+      <tr><td>Build script</td><td>hw/create_audio_v4.tcl (reproducible batch build)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Phase 2 -->
+<div class="phase">
+  <div class="phase-header">
+    <span class="badge badge-done">Done</span>
+    <h2>Phase 2: PetaLinux Audio Stack</h2>
+  </div>
+  <div class="phase-body">
+    <p>Imported the new XSA into PetaLinux, added device tree nodes for the audio subsystem, and rebuilt the Linux image with ALSA utilities for hardware testing.</p>
+
+    <div class="section-title">Device Tree Configuration</div>
+    <table>
+      <tr><th>Node</th><th>Address</th><th>Compatible</th></tr>
+      <tr><td>audio_formatter_0</td><td>0xA004_0000</td><td>xlnx,audio-formatter-1.0</td></tr>
+      <tr><td>i2s_receiver_0</td><td>0xA002_0000</td><td>xlnx,i2s-receiver-1.0</td></tr>
+      <tr><td>i2s_transmitter_0</td><td>0xA003_0000</td><td>xlnx,i2s-transmitter-1.0</td></tr>
+      <tr><td>sound card</td><td>—</td><td>xlnx,snd-pl-card</td></tr>
+    </table>
+
+    <div class="section-title">Kernel Driver Status</div>
+    <table>
+      <tr><th>Driver</th><th>Config</th><th>Status</th></tr>
+      <tr><td>SND_SOC_XILINX_I2S</td><td>CONFIG_SND_SOC_XILINX_I2S=y</td><td>Built-in</td></tr>
+      <tr><td>SND_SOC_XILINX_AUDIO_FORMATTER</td><td>CONFIG_SND_SOC_XILINX_AUDIO_FORMATTER=y</td><td>Built-in</td></tr>
+      <tr><td>SND_SOC_XILINX_PL_SND_CARD</td><td>CONFIG_SND_SOC_XILINX_PL_SND_CARD=y</td><td>Built-in</td></tr>
+    </table>
+
+    <div class="section-title">Build Outputs</div>
+    <table>
+      <tr><th>File</th><th>Size</th><th>Content</th></tr>
+      <tr><td>BOOT.BIN</td><td>30 MB</td><td>FSBL + bitstream (I2S + Audio Formatter) + U-Boot</td></tr>
+      <tr><td>image.ub</td><td>11 MB</td><td>Kernel 6.6.40 + device tree with audio nodes</td></tr>
+      <tr><td>rootfs.tar.gz</td><td>44 MB</td><td>Root filesystem with alsa-utils (aplay, arecord, speaker-test)</td></tr>
+    </table>
+
+    <div class="section-title">Verified After XSA Import</div>
+    <table>
+      <tr><th>Setting</th><th>Value</th><th>Status</th></tr>
+      <tr><td>Serial console</td><td>psu_uart_0 (ttyPS0,115200)</td><td>Correct</td></tr>
+      <tr><td>Ethernet</td><td>PSU_ETHERNET_3_SELECT=y</td><td>Correct</td></tr>
+      <tr><td>Boot args</td><td>console=ttyPS0,115200 root=/dev/mmcblk1p2</td><td>Correct</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Phase 3 -->
+<div class="phase">
+  <div class="phase-header">
+    <span class="badge badge-done">Done</span>
+    <h2>Phase 3: Python Voice Pipeline</h2>
+  </div>
+  <div class="phase-body">
+    <p>Complete Python application implementing the voice interaction state machine. Runs on the board's ARM Cortex-A53, communicates with PicoClaw via WebSocket for AI processing.</p>
+
+    <div class="section-title">Software Modules</div>
+    <table>
+      <tr><th>Module</th><th>Responsibility</th><th>External Dependency</th></tr>
+      <tr><td>config.py</td><td>YAML config loader with dataclass validation</td><td>pyyaml</td></tr>
+      <tr><td>audio_capture.py</td><td>ALSA mic capture (I2S via FPGA PL DMA)</td><td>pyaudio</td></tr>
+      <tr><td>vad.py</td><td>Speech detection (IDLE &rarr; SPEECH &rarr; IDLE)</td><td>webrtcvad</td></tr>
+      <tr><td>stt.py</td><td>Groq Whisper API (PCM &rarr; WAV &rarr; text)</td><td>requests</td></tr>
+      <tr><td>pico_client.py</td><td>PicoClaw Pico Protocol WebSocket client</td><td>websockets</td></tr>
+      <tr><td>tts.py</td><td>OpenAI TTS + espeak-ng offline fallback</td><td>openai / espeak-ng</td></tr>
+      <tr><td>audio_playback.py</td><td>ALSA speaker output (I2S via FPGA PL DMA)</td><td>pyaudio</td></tr>
+      <tr><td>main.py</td><td>State machine orchestrator (LISTENING &rarr; PROCESSING &rarr; SPEAKING)</td><td>—</td></tr>
+    </table>
+
+    <div class="section-title">File Structure</div>
+    <div class="file-tree">
+STT_andTTS/<br>
+├── config.yaml.example<br>
+├── requirements.txt<br>
+├── doc/<br>
+│   └── plan_voice_pipeline.md<br>
+└── voice_pipeline/<br>
+    ├── __init__.py<br>
+    ├── config.py<br>
+    ├── audio_capture.py<br>
+    ├── vad.py<br>
+    ├── stt.py<br>
+    ├── pico_client.py<br>
+    ├── tts.py<br>
+    ├── audio_playback.py<br>
+    └── main.py
+    </div>
+
+    <div class="section-title">Conversation Flow</div>
+    <div class="arch-diagram">
+User says: "Turn on LED 1"
+  &gt; INMP441 mic array &rarr; I2S &rarr; FPGA PL &rarr; DMA &rarr; PS ALSA
+  &gt; VAD detects speech (800ms silence = segment complete)
+  &gt; Groq Whisper STT &rarr; "Turn on LED 1"
+  &gt; PicoClaw WebSocket &rarr; Claude AI agent loop
+  &gt; exec(led_ctrl on 1) &rarr; FPGA LED turns on
+  &gt; Response: "LED 1 is now on."
+  &gt; OpenAI TTS &rarr; audio PCM
+  &gt; PS ALSA &rarr; DMA &rarr; FPGA PL I2S Tx &rarr; MAX98357A &rarr; Speaker
+User hears: "LED 1 is now on."</div>
+  </div>
+</div>
+
+<!-- Phase 4 -->
+<div class="phase">
+  <div class="phase-header">
+    <span class="badge badge-future">Planned</span>
+    <h2>Phase 4: Beamforming + Full Integration</h2>
+  </div>
+  <div class="phase-body">
+    <p>Leverage the 4-microphone array for spatial audio processing: delay-and-sum or MVDR beamforming to improve SNR, and Acoustic Echo Cancellation (AEC) to prevent the system from hearing its own speaker output.</p>
+  </div>
+</div>
+
+<!-- Next Steps -->
+<div class="next-steps">
+  <h3>Next Steps (Hardware Required)</h3>
+  <ul>
+    <li><strong>Purchase:</strong> 4x INMP441 breakout modules, 1x MAX98357A breakout, 1x 4&Omega;/8&Omega; speaker</li>
+    <li><strong>Wire:</strong> Connect modules to J50 40-pin header per pin assignment table</li>
+    <li><strong>Deploy:</strong> Flash SD card with BOOT.BIN + image.ub + rootfs</li>
+    <li><strong>Test hardware:</strong> <code>aplay -l</code>, <code>arecord -l</code>, <code>speaker-test</code></li>
+    <li><strong>Install Python deps:</strong> <code>pip3 install -r requirements.txt</code> on board</li>
+    <li><strong>End-to-end test:</strong> <code>python3 -m voice_pipeline.main --config config.yaml</code></li>
+  </ul>
+</div>
+
+<!-- Hardware Reference -->
+<div class="phase">
+  <div class="phase-header">
+    <h2>Hardware Reference: INMP441 &amp; MAX98357A Modules</h2>
+  </div>
+  <div class="phase-body" style="text-align: center;">
+    <img src="INMP441_MAX98357.jpg" alt="INMP441 MEMS Microphone and MAX98357A I2S Amplifier breakout modules"
+         style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #e2e8f0;">
+    <p style="margin-top: 0.75rem; font-size: 0.85rem; color: #64748b;">
+      Left: INMP441 MEMS microphone (I2S digital output, 1.8&ndash;3.3V) &mdash;
+      Right: MAX98357A I2S amplifier with built-in DAC (2.5&ndash;5.5V, up to 3W @ 4&Omega;)
+    </p>
+  </div>
+</div>
+
+<div class="footer">
+  AXU15EG Voice Pipeline &mdash; PicoClaw Project &mdash; Generated 2026-04-15
+</div>
+
+</div>
+</body>
+</html>
